@@ -1,26 +1,49 @@
-  很久以来一直在电影港下载资源，但是电影港不支持RSS，RSShub上也没有（还挺意外的）。但是不甘心就让Copilot帮忙部署了这个docker项目，来回改配置文件加测试折腾了好久，最主要解析完生成的RSS源导入ANI-RSS识别不到文件，修改了好久才解决（目前还是识别不了合集），但也算可用了。
-采用docker-compose.yml部署
+# RSS Magnet 简介
 
+🎬 这是一个小工具，可以把电影港的页面变成 RSS 订阅源，让你用下载工具（比如 ANI-RSS）自动下载资源。
+
+## 🧐 为什么要做这个？
+
+我一直在电影港找资源，但它不支持 RSS，RSShub 也没收录（有点意外）。所以我就自己动手，在Copilot的帮助下用 Docker 搭了这个服务。过程中踩了不少坑，尤其是 RSS 导入 ANI-RSS 时识别不了文件，调了好久才搞定（目前还是识别不了合集资源）。
+
+## 🚀 怎么部署？
+
+用 Docker 很简单，复制下面这段 `docker-compose.yml` 配置就能跑起来：
+
+```yaml
 services:
   rss-magnet:
     build: .
     container_name: rss-magnet
     ports:
-      - "5000:5000"  # 自己修改端口避免冲突
+      - "5000:5000"  # 可以改成你喜欢的端口
     restart: unless-stopped
     volumes:
-      - .:/app  # ✅ 映射当前目录到容器内
+      - .:/app       # 映射当前目录到容器里
     environment:
       - TZ=Asia/Taipei
 
-      feeds.json文件为需要解析的电影港页面，以下为示例，修改时千万注意不要漏了那个分割用的逗号！！！
+```
+📄 feeds.json 要怎么写？
+这个文件是你想订阅的电影港页面列表，格式如下：
 
-      
-      {
+```yaml
+{
   "师兄啊师兄": "https://www.dygangs.net/dmq/20230120/51294.htm",
   "吞噬星空": "https://www.dygang.cc/dmq/20201207/46020.htm",
   "仙逆": "https://www.dygang.cc/dmq/20230926/52997.htm"
 }
 
-部署后可以通过以下格式访问RSS源，此源可以直接导入ANI-RSS订阅下载。
-示例：  http://localhost:5000/rss/吞噬星空
+```
+✅ 注意：每个条目之间要用英文逗号分隔，别漏了！
+
+📡 RSS 地址怎么用？
+部署完成后，你可以通过下面的格式访问 RSS 源：
+
+http://localhost:5000/rss/资源名称
+
+比如：http://localhost:5000/rss/吞噬星空
+
+这个链接可以直接导入到 ANI-RSS 等工具中进行订阅和自动下载。
+
+
