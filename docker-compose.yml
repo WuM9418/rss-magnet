@@ -1,0 +1,11 @@
+services:
+  rss-magnet:
+    build: .
+    container_name: rss-magnet
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    volumes:
+      - .:/app  # ✅ 映射当前目录到容器内
+    environment:
+      - TZ=Asia/Taipei
